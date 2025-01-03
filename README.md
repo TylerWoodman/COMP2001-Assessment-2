@@ -1,6 +1,6 @@
 # **COMP2001 — Assessment 2**
 
-This is a repository for my **COMP2001 Assessment**. It contains all the files for the microservice I implemented for the trail service.
+This is a repository for my **COMP2001 Assessment**. It contains all the files for the microservice I implemented for the trail service. My microservice implements CRUD functionality for trails and authentication for users using JWT tokens.
 
 ---
 

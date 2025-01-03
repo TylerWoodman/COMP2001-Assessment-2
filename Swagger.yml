@@ -1,0 +1,239 @@
+openapi: 3.0.0
+info:
+  title: Trail Management API
+  description: API for managing trails, users, and features.
+  version: "1.0.0"
+
+servers:
+  - url: http://localhost:5000/api
+
+paths:
+  /login:
+    post:
+      summary: User login to obtain JWT token
+      operationId: Authentication.User_Authentication
+      description: Authenticate users with their email and password. Returns a JWT token
+        that can be used to access protected endpoints.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  description: The user's email
+                password:
+                  type: string
+                  description: The user's password
+              required:
+                - email
+                - password
+      responses:
+        "200":
+          description: Successful authentication
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token:
+                    type: string
+                    description: The JWT token for authentication
+        "401":
+          description: Invalid credentials
+        "500":
+          description: Internal server error
+
+  /Trails:
+    get:
+      summary: Retrieve all trails
+      operationId: api.Trail.Retrieve_All_Trails
+      security:
+        - BearerAuth: []
+      responses:
+        "200":
+          description: A list of all trails
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Trail'
+
+    post:
+      summary: Create a new trail
+      operationId: api.Trail.Create_Trail
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Trail_Input'
+      responses:
+        "201":
+          description: Trail created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Trail'
+        "400":
+          description: Invalid input
+
+  /Trails/{Trail_ID}:
+    parameters:
+      - name: Trail_ID
+        in: path
+        required: true
+        schema:
+          type: integer
+    get:
+      summary: Retrieve a trail by ID
+      operationId: api.Trail.Retrieve_Trail_By_Id
+      security:
+        - BearerAuth: []
+      responses:
+        "200":
+          description: A single trail
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Trail'
+        "404":
+          description: Trail not found
+
+    put:
+      summary: Update an existing trail
+      operationId: api.Trail.Update_Trail
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Trail_Input'
+      responses:
+        "200":
+          description: Trail updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Trail'
+        "404":
+          description: Trail not found
+        "400":
+          description: Invalid input
+
+    delete:
+      summary: Delete a trail
+      operationId: api.Trail.Delete_Trail
+      security:
+        - BearerAuth: []
+      responses:
+        "204":
+          description: Trail deleted successfully
+        "404":
+          description: Trail not found
+
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      x-bearerInfoFunc: Authentication.Bearer_Token_Verification
+
+  schemas:
+    Trail:
+      type: object
+      properties:
+        Trail_ID:
+          type: integer
+        Trail_Name:
+          type: string
+          maxLength: 100
+        Trail_Length:
+          type: number
+          minimum: 0
+        Trail_Summary:
+          type: string
+          maxLength: 255
+        Trail_Description:
+          type: string
+          maxLength: 1000
+        Difficulty:
+          type: string
+          enum: [Easy, Medium, Hard]
+        Elevation_Gain:
+          type: number
+          minimum: 0
+        Route_Type:
+          type: string
+          enum: [Loop, Point to Point]
+        Owner_ID:
+          type: integer
+        Location_Point_1:
+          type: integer
+          nullable: true
+        Location_Point_2:
+          type: integer
+          nullable: true
+        Location_Point_3:
+          type: integer
+          nullable: true
+        Location_Point_4:
+          type: integer
+          nullable: true
+        Location_Point_5:
+          type: integer
+          nullable: true
+
+    Trail_Input:
+      type: object
+      required:
+        - Trail_Name
+        - Trail_Length
+        - Owner_ID
+      properties:
+        Trail_Name:
+          type: string
+          maxLength: 100
+        Trail_Length:
+          type: number
+          minimum: 0
+        Trail_Summary:
+          type: string
+          maxLength: 255
+        Trail_Description:
+          type: string
+          maxLength: 1000
+        Difficulty:
+          type: string
+          enum: [Easy, Medium, Hard]
+        Elevation_Gain:
+          type: number
+          minimum: 0
+        Route_Type:
+          type: string
+          enum: [Loop, Point to Point]
+        Owner_ID:
+          type: integer
+        Location_Point_1:
+          type: integer
+          nullable: true
+        Location_Point_2:
+          type: integer
+          nullable: true
+        Location_Point_3:
+          type: integer
+          nullable: true
+        Location_Point_4:
+          type: integer
+          nullable: true
+        Location_Point_5:
+          type: integer
+          nullable: true
